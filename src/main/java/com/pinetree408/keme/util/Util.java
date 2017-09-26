@@ -24,6 +24,8 @@ import java.util.regex.Pattern;
 
 public class Util {
 
+  private static final int recoverStrategy = 1;
+
   final int PROCESS_VM_READ = 0x0010;
   final int PROCESS_QUERY_INFORMATION = 0x0400;
 
@@ -450,14 +452,30 @@ public class Util {
       }
 
     } else {
-      if (nowLang.equals("en")) {
-        deleteSize = this.eTok(joinedString).length();
+      if (recoverStrategy == 0) {
+        if (nowLang.equals("en")) {
+          deleteSize = this.eTok(joinedString).length();
+        }
+      } else {
+        if (nowLang.equals("ko")) {
+          deleteSize = this.eTok(joinedString).length();
+        }
+        deleteSize =  deleteSize + 1;
       }
     }
 
     for (int i = 0; i < deleteSize; i++) {
       robot.keyPress(KeyEvent.VK_BACK_SPACE);
       robot.keyRelease(KeyEvent.VK_BACK_SPACE);
+    }
+
+    if (recoverStrategy == 1) {
+      if (Platform.isWindows()) {
+        robot.keyPress(KeyEvent.VK_SHIFT);
+        robot.keyPress(KeyEvent.VK_SPACE);
+        robot.keyRelease(KeyEvent.VK_SPACE);
+        robot.keyRelease(KeyEvent.VK_SHIFT);
+      }
     }
 
     for (int i = 0; i < restoreSize; i++) {
